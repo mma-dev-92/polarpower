@@ -1,0 +1,2 @@
+LINE = "line"
+TRAFO = "trafo"
