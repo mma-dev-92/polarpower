@@ -1,2 +1,0 @@
-LINE = "line"
-TRAFO = "trafo"
