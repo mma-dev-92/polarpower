@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from src.datamodel import LINE, TRAFO
+from src.preprocess import LINE, TRAFO
 
 
 @pytest.fixture
@@ -10,34 +10,34 @@ def generators_df() -> pd.DataFrame:
         [
             {
                 "generator_id": "GEN1",
-                "node": "N1",
+                "node_id": "N1",
                 "P_min": -2.0,
                 "P_max": 3.0,
                 "cost": 1.0,
             },
             {
                 "generator_id": "GEN2",
-                "node": "N2",
+                "node_id": "N2",
                 "P_min": 3.0,
                 "P_max": 4.5,
                 "cost": np.nan,
             },
             {
                 "generator_id": "GEN3",
-                "node": "N1",
+                "node_id": "N1",
                 "P_min": -3.0,
                 "P_max": 3.0,
                 "cost": 3.5,
             },
             {
                 "generator_id": "GEN4",
-                "node": "N3",
+                "node_id": "N3",
                 "P_min": -7.0,
                 "P_max": -3.5,
                 "cost": 0.0,
             },
         ]
-    )
+    ).set_index("generator_id")
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def nodes_df() -> pd.DataFrame:
             {"node_id": "N4", "P_demand": 0.0},
             {"node_id": "N5", "P_demand": np.nan},
         ]
-    )
+    ).set_index("node_id")
 
 
 @pytest.fixture
@@ -59,9 +59,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "TRAFO1",
-                "type": TRAFO,
-                "bus_from": "N2",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N2",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 4.5,
                 "F_min": np.nan,
@@ -72,9 +72,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO2",
-                "type": TRAFO,
-                "bus_from": "N4",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N4",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 4.5,
                 "F_min": np.nan,
@@ -85,9 +85,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO3",
-                "type": TRAFO,
-                "bus_from": "N4",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N4",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 4.5,
                 "F_min": np.nan,
@@ -98,9 +98,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE1",
-                "type": LINE,
-                "bus_from": "N4",
-                "bus_to": "N5",
+                "branch_type": LINE,
+                "node_from": "N4",
+                "node_to": "N5",
                 "reactance": 0.03,
                 "F_max": 4.5,
                 "F_min": -3.0,
@@ -111,9 +111,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE2",
-                "type": LINE,
-                "bus_from": "N2",
-                "bus_to": "N5",
+                "branch_type": LINE,
+                "node_from": "N2",
+                "node_to": "N5",
                 "reactance": 0.03,
                 "F_max": 4.5,
                 "F_min": -3.0,
@@ -124,9 +124,9 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE3",
-                "type": LINE,
-                "bus_from": "N3",
-                "bus_to": "N5",
+                "branch_type": LINE,
+                "node_from": "N3",
+                "node_to": "N5",
                 "reactance": 0.03,
                 "F_max": 4.5,
                 "F_min": -3.0,
@@ -136,7 +136,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "phase_shift_max": np.nan,
             },
         ]
-    )
+    ).set_index("branch_id")
 
 
 @pytest.fixture
@@ -145,33 +145,30 @@ def branches_only_lines_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "LINE1",
-                "type": LINE,
-                "bus_from": "N1",
-                "bus_to": "N2",
+                "branch_type": LINE,
+                "node_from": "N1",
+                "node_to": "N2",
                 "reactance": 0.1,
                 "F_max": 3.0,
-                "F_min": np.nan,
             },
             {
                 "branch_id": "LINE2",
-                "type": LINE,
-                "bus_from": "N3",
-                "bus_to": "N2",
+                "branch_type": LINE,
+                "node_from": "N3",
+                "node_to": "N2",
                 "reactance": 0.05,
                 "F_max": 1.0,
-                "F_min": -0.5,
             },
             {
                 "branch_id": "LINE3",
-                "type": LINE,
-                "bus_from": "N1",
-                "bus_to": "N3",
+                "branch_type": LINE,
+                "node_from": "N1",
+                "node_to": "N3",
                 "reactance": 0.01,
                 "F_max": 2.0,
-                "F_min": np.nan,
             },
         ]
-    )
+    ).set_index("branch_id")
 
 
 @pytest.fixture
@@ -180,9 +177,9 @@ def branches_only_trafos_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "TRAFO1",
-                "type": TRAFO,
-                "bus_from": "N2",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N2",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 4.5,
                 "F_min": np.nan,
@@ -193,9 +190,9 @@ def branches_only_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO2",
-                "type": TRAFO,
-                "bus_from": "N4",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N4",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 2.5,
                 "F_min": np.nan,
@@ -206,9 +203,9 @@ def branches_only_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO3",
-                "type": TRAFO,
-                "bus_from": "N4",
-                "bus_to": "N3",
+                "branch_type": TRAFO,
+                "node_from": "N4",
+                "node_to": "N3",
                 "reactance": 0.07,
                 "F_max": 4.5,
                 "F_min": np.nan,
@@ -218,4 +215,4 @@ def branches_only_trafos_df() -> pd.DataFrame:
                 "phase_shift_max": np.nan,
             },
         ]
-    )
+    ).set_index("branch_id")

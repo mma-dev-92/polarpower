@@ -1,15 +1,17 @@
+from typing import Type
+
 from pandas import DataFrame
+from pandera import DataFrameModel
 from pandera.errors import SchemaErrorReason, SchemaErrors
-from src.datamodel.validator import DatasetValidator
 
 
 def check_schema_errors_reasons(
-    validator: DatasetValidator,
+    data_model: Type[DataFrameModel],
     df: DataFrame,
     expected_error_reasons: list[SchemaErrorReason],
 ) -> None:
     try:
-        validator.validate(df)
+        data_model.validate(df, lazy=True)
     except SchemaErrors as e:
         reason_codes = [err.reason_code for err in e.schema_errors]
         assert (
