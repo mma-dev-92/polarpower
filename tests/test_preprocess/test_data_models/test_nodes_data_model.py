@@ -1,5 +1,8 @@
 import pandas as pd
+import pytest
+from pandas.io import pytables
 from src.preprocess.data_models.nodes_data_model import NodesDataModel
+from src.preprocess.validation import validation_logs
 from tests.test_preprocess.test_data_models.utils import \
     check_schema_errors_reasons
 
@@ -25,3 +28,9 @@ def test_validation_on_correct_empty_data() -> None:
         df=empty_df,
         expected_error_reasons=[],
     )
+
+
+def test_failure(nodes_df: pd.DataFrame) -> None:
+    df = nodes_df.copy()
+    df["P_demand"] = df["P_demand"].astype(object)
+    df.loc["N2", "P_demand"] = True

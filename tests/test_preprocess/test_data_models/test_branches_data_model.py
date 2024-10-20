@@ -57,23 +57,3 @@ def test_validate_empty_data() -> None:
         .set_index("branch_id")
     )
     check_schema_errors_reasons(BranchesDataModel, empty_df, [])
-
-
-def test_datatypes_validation() -> None:
-    pass
-
-
-def test_uniquness_validation() -> None:
-    pass
-
-
-def test_null_values_validation() -> None:
-    pass
-
-
-def test_missing_columns_validation() -> None:
-    pass
-
-
-def test_trafos_parameters_validation() -> None:
-    pass

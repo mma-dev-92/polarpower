@@ -14,13 +14,13 @@ def finite_check(s: pd.Series, allow_nan: bool = False):
 
 def line_col_check(df: pd.DataFrame, col_name: str, val: float):
     """
-    Validate transformer parameter column for 'LINE' branches rows.
+    Validate transformer parameter column for 'LINE' branches.
 
     If given column is not in the given DataFrame - validation passes only
     if there is no transformer ('TRAFO' branch) in the DataFrame.
 
     If given column exists in the given DataFrame, make sure, that all
-    values for 'LINE' branches are undefined (NaN).
+    values for 'LINE' branches are euqal to specific value.
     """
     line_data = df[df["branch_type"] == LINE]
     if col_name not in df.columns:

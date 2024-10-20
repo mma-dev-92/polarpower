@@ -67,8 +67,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.1,
                 "phase_shift": np.pi / 6,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "TRAFO2",
@@ -80,8 +78,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.1,
                 "phase_shift": np.pi / 6,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "TRAFO3",
@@ -93,8 +89,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.0,
                 "phase_shift": 0,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "LINE1",
@@ -106,8 +100,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": -3.0,
                 "tap_ratio": 1.0,
                 "phase_shift": np.nan,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "LINE2",
@@ -119,8 +111,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": -3.0,
                 "tap_ratio": np.nan,
                 "phase_shift": np.nan,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "LINE3",
@@ -132,8 +122,6 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
                 "F_min": -3.0,
                 "tap_ratio": np.nan,
                 "phase_shift": 0.0,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
         ]
     ).set_index("branch_id")
@@ -185,8 +173,6 @@ def branches_only_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.1,
                 "phase_shift": np.pi / 6,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "TRAFO2",
@@ -198,8 +184,6 @@ def branches_only_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.1,
                 "phase_shift": np.pi / 6,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
             {
                 "branch_id": "TRAFO3",
@@ -211,8 +195,6 @@ def branches_only_trafos_df() -> pd.DataFrame:
                 "F_min": np.nan,
                 "tap_ratio": 1.0,
                 "phase_shift": 0,
-                "phase_shift_min": np.nan,
-                "phase_shift_max": np.nan,
             },
         ]
     ).set_index("branch_id")

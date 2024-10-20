@@ -4,7 +4,7 @@ import pandas as pd
 
 
 @dataclass
-class InputPowerSystemData:
+class InputData:
     """Class for the input power system data."""
 
     branches: pd.DataFrame
@@ -13,15 +13,3 @@ class InputPowerSystemData:
     """Generators parameters."""
     nodes: pd.DataFrame
     """Nodes parameters."""
-
-    def __post_init__(self) -> None:
-        pass
-
-    def validate_branches(self) -> pd.DataFrame:
-        raise NotImplementedError
-
-    def validate_nodes(self) -> pd.DataFrame:
-        raise NotImplementedError
-
-    def validate_generators(self) -> pd.DataFrame:
-        raise NotImplementedError
