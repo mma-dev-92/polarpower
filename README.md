@@ -1,13 +1,14 @@
 ### How to install pyomo with Cython
 
-First create and activate your virtual environment.
+Create your virtual environment and install project dependencies.
 
 ```shell
 python -m venv .venv
 source .venv/bin/activate
+pip install -r requirements
 ```
 
-Next, install the Python development package corresponding to your Python version.
+Install the Python development package corresponding to your Python version.
 
 ```shell
 sudo apt update
@@ -16,21 +17,14 @@ sudo apt-get install python3.<X>-dev
 
 Change `<X>` to your Python version.
 
-Next, install the setuptools and cython packages 
-(make sure your virtual envirnoment is active).
-
-```shell
-pip install setuptools
-pip install cython
-```
-
-At the end, clone the pyomo repository to your location.
+Clone the pyomo repository.
 
 ```shell
 git clone https://github.com/Pyomo/pyomo.git
 ```
 
-Navigate to the root folder of cloned pyomo repo and install pyomo by running
+Navigate to the root folder of cloned pyomo repo and (with your venv activated) 
+install pyomo by running the following command.
 
 ```shell
 python setup.py install --with-cython
