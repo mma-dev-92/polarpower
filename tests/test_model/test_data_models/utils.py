@@ -1,17 +1,18 @@
 from typing import Type
 
 from pandas import DataFrame
-from pandera import DataFrameModel
 from pandera.errors import SchemaErrorReason, SchemaErrors
+from src.model.data_models import DataFrameModelWithContext
 
 
 def check_schema_errors_reasons(
-    data_model: Type[DataFrameModel],
+    data_model: Type[DataFrameModelWithContext],
     df: DataFrame,
     expected_error_reasons: list[SchemaErrorReason],
+    context: dict | None = None,
 ) -> None:
     try:
-        data_model.validate(df, lazy=True)
+        data_model.validate(df, lazy=True, context=context or dict())
     except SchemaErrors as e:
         reason_codes = [err.reason_code for err in e.schema_errors]
         assert (

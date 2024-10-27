@@ -2,11 +2,12 @@ from typing import Optional
 
 import pandas as pd
 import pandera as pa
+import src.model.data_models.utils as utils
 from pandera.typing import Index, Series
-from src.preprocess.data_models.utils import err_finite_check, finite_check
+from src.model.data_models import DataFrameModelWithContext
 
 
-class NodesDataModel(pa.DataFrameModel):
+class NodesDataModel(DataFrameModelWithContext):
     """Data model for nodes DataFrame."""
 
     node_id: Index[str] = pa.Field(
@@ -28,7 +29,7 @@ class NodesDataModel(pa.DataFrameModel):
         ),
     )
 
-    @pa.check("P_demand", error=err_finite_check("P_demand", null=True))
+    @pa.check("P_demand", error=utils.err_finite_check("P_demand", null=True))
     def validate_demand_is_finite(cls, P_demand: pd.Series):
         """Check that all provided demand values are finite."""
-        return finite_check(P_demand, allow_nan=True)
+        return utils.finite_check(P_demand, allow_nan=True)

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from src.preprocess import LINE, TRAFO
+from src.model import BranchType
 
 
 @pytest.fixture
@@ -59,7 +59,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "TRAFO1",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N2",
                 "node_to": "N3",
                 "reactance": 0.07,
@@ -70,7 +70,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO2",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N4",
                 "node_to": "N3",
                 "reactance": 0.07,
@@ -81,7 +81,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO3",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N4",
                 "node_to": "N3",
                 "reactance": 0.07,
@@ -92,7 +92,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE1",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N4",
                 "node_to": "N5",
                 "reactance": 0.03,
@@ -103,7 +103,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE2",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N2",
                 "node_to": "N5",
                 "reactance": 0.03,
@@ -114,7 +114,7 @@ def branches_lines_and_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE3",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N3",
                 "node_to": "N5",
                 "reactance": 0.03,
@@ -133,7 +133,7 @@ def branches_only_lines_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "LINE1",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N1",
                 "node_to": "N2",
                 "reactance": 0.1,
@@ -141,7 +141,7 @@ def branches_only_lines_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE2",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N3",
                 "node_to": "N2",
                 "reactance": 0.05,
@@ -149,7 +149,7 @@ def branches_only_lines_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "LINE3",
-                "branch_type": LINE,
+                "branch_type": BranchType.LINE.name,
                 "node_from": "N1",
                 "node_to": "N3",
                 "reactance": 0.01,
@@ -165,7 +165,7 @@ def branches_only_trafos_df() -> pd.DataFrame:
         [
             {
                 "branch_id": "TRAFO1",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N2",
                 "node_to": "N3",
                 "reactance": 0.07,
@@ -176,7 +176,7 @@ def branches_only_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO2",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N4",
                 "node_to": "N3",
                 "reactance": 0.07,
@@ -187,7 +187,7 @@ def branches_only_trafos_df() -> pd.DataFrame:
             },
             {
                 "branch_id": "TRAFO3",
-                "branch_type": TRAFO,
+                "branch_type": BranchType.TRAFO.name,
                 "node_from": "N4",
                 "node_to": "N3",
                 "reactance": 0.07,

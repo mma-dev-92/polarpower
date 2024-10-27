@@ -1,16 +1,18 @@
 import pandas as pd
-from src.preprocess.data_models.generators_data_model import \
-    GeneratorsDataModel
-from tests.test_preprocess.test_data_models.utils import \
-    check_schema_errors_reasons
+from src.model.data_models.generators_data_model import GeneratorsDataModel
+from tests.test_model.test_data_models.utils import check_schema_errors_reasons
 
 
-def test_validation_on_correct_input(generators_df: pd.DataFrame) -> None:
+def test_validation_on_correct_input(
+    generators_df: pd.DataFrame,
+    nodes_df: pd.DataFrame,
+) -> None:
     """Test if correct data are validated without errors."""
     check_schema_errors_reasons(
         data_model=GeneratorsDataModel,
         df=generators_df,
         expected_error_reasons=[],
+        context={"nodes_index": nodes_df.index},
     )
 
 
@@ -33,4 +35,6 @@ def test_validate_empty_data() -> None:
             }
         )
     ).set_index("generator_id")
-    check_schema_errors_reasons(GeneratorsDataModel, empty_df, [])
+    check_schema_errors_reasons(
+        GeneratorsDataModel, empty_df, [], context={"nodes_index": []}
+    )
