@@ -2,12 +2,12 @@ from typing import Optional
 
 import pandas as pd
 import pandera as pa
+import src.model.data_models.utils as utils
 from pandera.typing import Index, Series
-from src.preprocess.data_models.utils import (err_finite_check, err_ge_check,
-                                              finite_check)
+from src.model.data_models import DataFrameModelWithContext
 
 
-class GeneratorsDataModel(pa.DataFrameModel):
+class GeneratorsDataModel(DataFrameModelWithContext):
     """Data model for generators DataFrame."""
 
     generator_id: Index[str] = pa.Field(
@@ -38,19 +38,23 @@ class GeneratorsDataModel(pa.DataFrameModel):
         description="Indicates if given generator is active or not.",
     )
 
-    @pa.check("P_max", error=err_finite_check("P_max", null=False))
+    @pa.check("node_id")
+    def validate_node_identifiers(cls, node_id: Series[str]):
+        return node_id.isin(cls.get_context("nodes_index"))
+
+    @pa.check("P_max", error=utils.err_finite_check("P_max", null=False))
     def validate_P_max_is_finite(cls, P_max: Series[float]):
-        return finite_check(P_max, allow_nan=False)
+        return utils.finite_check(P_max, allow_nan=False)
 
-    @pa.check("P_min", error=err_finite_check("P_min", null=False))
+    @pa.check("P_min", error=utils.err_finite_check("P_min", null=False))
     def validate_P_min_is_finite(cls, P_min: Series[float]):
-        return finite_check(P_min, allow_nan=False)
+        return utils.finite_check(P_min, allow_nan=False)
 
-    @pa.check("cost", error=err_finite_check("cost", null=True))
+    @pa.check("cost", error=utils.err_finite_check("cost", null=True))
     def validate_cost_is_finite(cls, cost: Series[float]):
-        return finite_check(cost, allow_nan=True)
+        return utils.finite_check(cost, allow_nan=True)
 
-    @pa.dataframe_check(error=err_ge_check("P_max", "P_min", null=False))
+    @pa.dataframe_check(error=utils.err_ge_check("P_max", "P_min", null=False))
     def validate_power_bounds(cls, df: pd.DataFrame) -> pd.Series:
         """Validate if P_max is greater or equal than P_min."""
         return df["P_max"] >= df["P_min"]
