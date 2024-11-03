@@ -5,24 +5,12 @@ import pandas as pd
 import pandera as pa
 import src.model.data_models.utils as u
 from pandera.typing import Index, Series
-from src.model import BranchType
 from src.model.data_models import DataFrameModelWithContext
 
 
 class BranchesDataModel(DataFrameModelWithContext):
-    """Data model for TransmissionLines dataset."""
+    """Base DataModel for trafos and transmission lines."""
 
-    branch_id: Index[str] = pa.Field(
-        check_name=True,
-        coerce=True,
-        unique=True,
-        description="Element identifier.",
-    )
-    branch_type: Series[str] = pa.Field(
-        coerce=True,
-        isin=[BranchType.LINE.name, BranchType.TRAFO.name],
-        description=f"Branch type: {BranchType.LINE} or {BranchType.TRAFO}.",
-    )
     node_from: Series[str] = pa.Field(
         coerce=True, description="Identifier of a starting node."
     )
@@ -43,19 +31,6 @@ class BranchesDataModel(DataFrameModelWithContext):
         default=np.nan,
         coerce=True,
         description="Minimal power flow [per unit].",
-    )
-    tap_ratio: Optional[Series[float]] = pa.Field(
-        nullable=True,
-        default=1.0,
-        gt=0.0,
-        coerce=True,
-        description="Transforer tap ratio.",
-    )
-    phase_shift: Optional[Series[float]] = pa.Field(
-        coerce=True,
-        default=0.0,
-        in_range={"min_value": 0.0, "max_value": np.pi / 2},
-        description="Transformer phase shift angle.",
     )
 
     @pa.check("node_from")
@@ -82,9 +57,45 @@ class BranchesDataModel(DataFrameModelWithContext):
     def validate_flow_limits(cls, df: pd.DataFrame):
         """Validate if F_max >= F_min for each branch, where F_min is specified."""
         if "F_min" not in df.columns:
-            return True
+            df["F_min"] = np.ones(len(df)) * np.nan
         min_flow_provided = df[~np.isnan(df["F_min"])]
         return min_flow_provided["F_min"] <= min_flow_provided["F_max"]
+
+
+class TransmissionLinesDataModel(BranchesDataModel):
+    """Data model for TransmissionLines dataset."""
+
+    line_id: Index[str] = pa.Field(
+        check_name=True,
+        coerce=True,
+        unique=True,
+        description="Transmission line identifier.",
+    )
+
+
+class TransformersDataModel(BranchesDataModel):
+    """Data model for Transformeres dataset."""
+
+    trafo_id: Index[str] = pa.Field(
+        check_name=True,
+        coerce=True,
+        unique=True,
+        description="Transformer identifier.",
+    )
+
+    tap_ratio: Optional[Series[float]] = pa.Field(
+        nullable=True,
+        default=1.0,
+        gt=0.0,
+        coerce=True,
+        description="Transforer tap ratio.",
+    )
+    phase_shift: Optional[Series[float]] = pa.Field(
+        coerce=True,
+        default=0.0,
+        in_range={"min_value": 0.0, "max_value": np.pi / 2},
+        description="Transformer phase shift angle.",
+    )
 
     @pa.check("tap_ratio", error=u.err_finite_check("tap_ratio", null=True))
     def validate_tap_ratio_is_finite(cls, tap_ratio: Series[float]):
@@ -93,11 +104,3 @@ class BranchesDataModel(DataFrameModelWithContext):
     @pa.check("phase_shift", error=u.err_finite_check("phase_shift", null=True))
     def validate_phase_shift_is_finite(cls, phase_shift: Series[float]):
         return u.finite_check(phase_shift, allow_nan=True)
-
-    @pa.dataframe_check(error=u.err_line_col_check("tap_ratio", default=1.0))
-    def validate_lines_tap_ratio(cls, df: pd.DataFrame):
-        return u.line_col_check(df, "tap_ratio", 1.0)
-
-    @pa.dataframe_check(error=u.err_line_col_check("phase_shift", default=0.0))
-    def validate_lines_phase_shift(cls, df: pd.DataFrame):
-        return u.line_col_check(df, "phase_shift", 0.0)
