@@ -29,6 +29,7 @@ pexpect==4.9.0
 platformdirs==4.3.6
 pluggy==1.5.0
 ply==3.11
+polars==1.14.0
 prompt_toolkit==3.0.48
 psutil==6.1.0
 ptyprocess==0.7.0
@@ -36,6 +37,7 @@ pure_eval==0.2.3
 pydantic==2.9.2
 pydantic_core==2.23.4
 Pygments==2.18.0
+Pyomo==6.8.2
 pytest==8.3.3
 python-dateutil==2.9.0.post0
 pytz==2024.2

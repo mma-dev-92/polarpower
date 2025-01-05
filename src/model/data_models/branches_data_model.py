@@ -33,11 +33,11 @@ class BranchesDataModel(DataFrameModelWithContext):
         description="Minimal power flow [per unit].",
     )
 
-    @pa.check("node_from")
+    @pa.check("node_from", error=u.err_foreign_key(fk_col="node_from"))
     def validate_node_from_ideitifier(cls, node_from: Series[str]):
         return node_from.isin(cls.get_context("nodes_index"))
 
-    @pa.check("node_to")
+    @pa.check("node_to", error=u.err_foreign_key(fk_col="node_to"))
     def validate_node_to_identifier(cls, node_to: Series[str]):
         return node_to.isin(cls.get_context("nodes_index"))
 
@@ -86,7 +86,7 @@ class TransformersDataModel(BranchesDataModel):
     tap_ratio: Optional[Series[float]] = pa.Field(
         nullable=True,
         default=1.0,
-        gt=0.0,
+        in_range={"min_value": 0.0, "max_value": 2 * np.pi},
         coerce=True,
         description="Transforer tap ratio.",
     )
@@ -104,3 +104,4 @@ class TransformersDataModel(BranchesDataModel):
     @pa.check("phase_shift", error=u.err_finite_check("phase_shift", null=True))
     def validate_phase_shift_is_finite(cls, phase_shift: Series[float]):
         return u.finite_check(phase_shift, allow_nan=True)
+

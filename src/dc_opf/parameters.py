@@ -1,4 +1,6 @@
-from pyomo.environ import Param, PositiveReals, Reals  # type: ignore
+from pyomo.environ import Param  # type: ignore
+from pyomo.environ import PositiveReals  # type: ignore
+from pyomo.environ import NonNegativeReals, Reals  # type: ignore
 
 
 def parameters(model) -> None:
@@ -33,6 +35,13 @@ def generator_parameters(model) -> None:
     model.pmin = Param(
         model.G, within=Reals, doc="Minimum generation capacity [per unit]."
     )
+
+
+def marginal_cost_segments_parameters(model) -> None:
+    """Generators marginal cost parameters for the DC OPF optimization problem."""
+    model.pstart = Param(model.GxS, within=NonNegativeReals)
+    model.pend = Param(model.GxS, within=NonNegativeReals)
+    model.marginal_cost = Param(model.GxS, within=NonNegativeReals)
 
 
 def transmission_line_parameters(model) -> None:

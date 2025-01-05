@@ -17,7 +17,13 @@ def generator_variables(model) -> None:
         model.G,
         within=Reals,
         bounds=lambda model, g: (model.pmin[g], model.pmax[g]),
-        doc="Generation [per unit] at each generator.",
+        doc="Power generation [per unit] at each generator.",
+    )
+    model.GenS = Var(
+        model.GxS,
+        within=Reals,
+        bounds=lambda model, gs: (0, model.pend[gs] - model.pstart[gs]),
+        doc="Power generation [per unit] at each generator within given merit order segment.",
     )
 
 
@@ -36,3 +42,8 @@ def node_variables(model) -> None:
     model.Theta = Var(
         model.N, within=Reals, bounds=(0.0, 2 * pi), doc="Voltage angle at each node."
     )
+
+
+def transformers_variables(model) -> None:
+    """Transformer variables."""
+    raise NotImplementedError("Transformers are not supported yet.")

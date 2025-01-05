@@ -12,31 +12,42 @@ def generators_df() -> pd.DataFrame:
                 "node_id": "N1",
                 "P_min": -2.0,
                 "P_max": 3.0,
-                "cost": 1.0,
             },
             {
                 "generator_id": "GEN2",
                 "node_id": "N2",
                 "P_min": 3.0,
                 "P_max": 4.5,
-                "cost": np.nan,
             },
             {
                 "generator_id": "GEN3",
                 "node_id": "N1",
                 "P_min": -3.0,
                 "P_max": 3.0,
-                "cost": 3.5,
             },
             {
                 "generator_id": "GEN4",
                 "node_id": "N3",
                 "P_min": -7.0,
                 "P_max": -3.5,
-                "cost": 0.0,
             },
         ]
     ).set_index("generator_id")
+
+
+@pytest.fixture
+def marginal_costs_df() -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {"generator_id": "GEN1", "p_start": -2, "p_end": 0.0, "cost": -1.0},
+            {"generator_id": "GEN1", "p_start": 0.0, "p_end": 3.0, "cost": 2.0},
+            {"generator_id": "GEN2", "p_start": 3.0, "p_end": 4.0, "cost": 2.0},
+            {"generator_id": "GEN2", "p_start": 4.0, "p_end": 4.5, "cost": 3.5},
+            {"generator_id": "GEN3", "p_start": -3.0, "p_end": 0.0, "cost": 0.0},
+            {"generator_id": "GEN3", "p_start": 0.0, "p_end": 3.0, "cost": 1.0},
+            {"generator_id": "GEN4", "p_start": -7.0, "p_end": -3.5, "cost": 0.0},
+        ]
+    )
 
 
 @pytest.fixture

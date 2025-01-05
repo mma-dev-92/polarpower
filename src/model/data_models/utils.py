@@ -25,3 +25,23 @@ def err_ge_check(ge: str, le: str, null: bool) -> str:
     else:
         result = f"'{ge}' must be greater or equal to '{le}' (if privided)."
     return result
+
+
+def err_greater_check(g: str, l: str, null: bool) -> str:
+    if not null:
+        result = f"'{g}' must be greater from '{l}'."
+    else:
+        result = f"'{g}' must be greater from '{l}' (if privided)."
+    return result
+
+
+def err_foreign_key(fk_col: str) -> str:
+    return f"invalid refference to {fk_col}"
+
+
+def err_prange() -> str:
+    return "some power generation ranges [p_start, p_end] are incorrect"
+
+
+def err_non_monotonic_merit_order() -> str:
+    return "some generators have decreasing merit order costs"

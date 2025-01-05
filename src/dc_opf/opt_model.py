@@ -1,4 +1,5 @@
 from pyomo.environ import AbstractModel
+
 from src.dc_opf.constraints import constraints
 from src.dc_opf.objective import objective
 from src.dc_opf.parameters import parameters
@@ -18,6 +19,10 @@ def df_opf_abstract_model():
     return opt_model
 
 
-def dc_opf(power_system_model: PowerSystemModel):
+def dc_opf(power_system_model: PowerSystemModel) -> None:
     """Solve DC OPF on given PowerSystemModel object."""
+    # TODO: run the optimization problem and update the system state
+    #   from the model results
+    # TODO: If model is infeasible, raise an error indicating, that
+    #   computation crushed
     pass
