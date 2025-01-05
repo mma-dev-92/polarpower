@@ -21,6 +21,8 @@ def df_opf_abstract_model():
 
 def dc_opf(power_system_model: PowerSystemModel) -> None:
     """Solve DC OPF on given PowerSystemModel object."""
+    # TODO: create ConcreteModel from an AbstractModel based on the
+    #   given power_system_model
     # TODO: run the optimization problem and update the system state
     #   from the model results
     # TODO: If model is infeasible, raise an error indicating, that
