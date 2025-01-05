@@ -2,8 +2,9 @@ from typing import Optional
 
 import pandas as pd
 import pandera as pa
-import src.model.data_models.utils as utils
 from pandera.typing import Index, Series
+
+import src.model.data_models.utils as utils
 from src.model.data_models import DataFrameModelWithContext
 
 

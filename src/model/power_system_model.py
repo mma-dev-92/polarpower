@@ -5,22 +5,29 @@ from typing import Self
 import numpy as np
 import pandas as pd
 from pandera import errors
-from src.model.data_models.branches_data_model import BranchesDataModel
+
+from src.model.data_models.branches_data_model import (
+    TransformersDataModel, TransmissionLinesDataModel)
 from src.model.data_models.error_logs import log_schema_errors
 from src.model.data_models.generators_data_model import GeneratorsDataModel
+from src.model.data_models.marginal_costs_model import MarginalCostsDataModel
 from src.model.data_models.nodes_data_model import NodesDataModel
 
 
 @dataclass
-class SystemParameters:
-    """Power system model initial parameters."""
+class SystemStructure:
+    """Power system model structure."""
 
-    branches: pd.DataFrame
-    """Branches parameters."""
+    tramsmission_lines: pd.DataFrame
+    """Transmission lines parameters."""
+    transformers: pd.DataFrame
+    """Transformators parameters."""
     generators: pd.DataFrame
     """Generators parameters."""
     nodes: pd.DataFrame
     """Nodes parameters."""
+    marginal_costs: pd.DataFrame
+    """Generators marginal costs."""
 
     def __post_init__(self) -> None:
         self._validate()
@@ -29,9 +36,23 @@ class SystemParameters:
     def _validate(self) -> None:
         data_is_correct: bool = True
         for df, data_model, context in [
-            (self.branches, BranchesDataModel, {"nodes_index": self.nodes.index}),
             (self.generators, GeneratorsDataModel, {"nodes_index": self.nodes.index}),
+            (
+                self.tramsmission_lines,
+                TransmissionLinesDataModel,
+                {"nodes_index": self.nodes.index},
+            ),
+            (
+                self.transformers,
+                TransformersDataModel,
+                {"nodes_index": self.nodes.index},
+            ),
             (self.nodes, NodesDataModel, dict()),
+            (
+                self.marginal_costs,
+                MarginalCostsDataModel,
+                {"generators_df": self.generators},
+            ),
         ]:
             try:
                 data_model.validate(
@@ -39,15 +60,21 @@ class SystemParameters:
                 )
             except errors.SchemaErrors as schema_errors:
                 log_schema_errors(schema_errors)
+                # TODO: if specified dump validation report to *.csv file
                 data_is_correct = False
 
         if not data_is_correct:
             sys.exit()
 
     def _refine(self) -> None:
-        f_min_nan = self.branches["F_min"].isna()
+        self._refine_f_min(self.transformers)
+        self._refine_f_min(self.tramsmission_lines)
+
+    @staticmethod
+    def _refine_f_min(df: pd.DataFrame) -> None:
+        f_min_nan = df["F_min"].isna()
         if f_min_nan.size > 0:
-            self.branches.loc[f_min_nan, "F_min"] = -self.branches[f_min_nan]["F_max"]
+            df.loc[f_min_nan, "F_min"] = -df[f_min_nan]["F_max"]
 
 
 @dataclass
@@ -56,23 +83,30 @@ class SystemState:
 
     power_generation: pd.Series
     """Generators power generation."""
-    power_flow: pd.Series
-    """Branches power flow."""
+    ts_power_flow: pd.Series
+    """Transmission lines power flow."""
+    trafos_power_flow: pd.Series
+    """Transformators power flow."""
     theta: pd.Series
     """Nodes voltage angle."""
 
     @classmethod
-    def undefined_state(cls, params: SystemParameters) -> Self:
+    def undefined_state(cls, params: SystemStructure) -> Self:
         """Undefined (NaN) model state."""
         return cls(
             power_generation=cls._nan_like(params.generators, "Power Generation"),
-            power_flow=cls._nan_like(params.branches, "Power Flow"),
+            ts_power_flow=cls._nan_like(params.tramsmission_lines, "TLines Power Flow"),
+            trafos_power_flow=cls._nan_like(params.transformers, "Trafos Power Flow"),
             theta=cls._nan_like(params.nodes, "Theta"),
         )
 
     @staticmethod
     def _nan_like(df: pd.DataFrame, name: str) -> pd.Series:
         return pd.Series(data=np.ones(len(df)) * np.nan, index=df.index, name=name)
+
+    def reset(self) -> None:
+        """Reset system state."""
+        raise NotImplementedError
 
 
 class PowerSystemModel:
@@ -81,18 +115,22 @@ class PowerSystemModel:
     def __init__(
         self,
         generators: pd.DataFrame,
-        branches: pd.DataFrame,
+        transmission_lines: pd.DataFrame,
+        transformers: pd.DataFrame,
         nodes: pd.DataFrame,
+        marginal_costs: pd.DataFrame,
     ) -> None:
-        self._parameters = SystemParameters(
+        self._parameters = SystemStructure(
             generators=generators,
-            branches=branches,
+            tramsmission_lines=transmission_lines,
+            transformers=transformers,
             nodes=nodes,
+            marginal_costs=marginal_costs,
         )
         self._state = SystemState.undefined_state(self._parameters)
 
     @property
-    def parameters(self) -> SystemParameters:
+    def parameters(self) -> SystemStructure:
         """Parameters defining system structure and its components."""
         return self._parameters
 

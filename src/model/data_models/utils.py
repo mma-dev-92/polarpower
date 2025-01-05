@@ -1,30 +1,5 @@
 import numpy as np
 import pandas as pd
-from src.model import BranchType
-
-
-def line_col_check(df: pd.DataFrame, col_name: str, val: float):
-    """
-    Validate transformer parameter column for 'LINE' branches.
-
-    If given column is not in the given DataFrame - validation passes only
-    if there is no transformer ('TRAFO' branch) in the DataFrame.
-
-    If given column exists in the given DataFrame, make sure, that all
-    values for 'LINE' branches are euqal to specific value.
-    """
-    line_data = df[df["branch_type"] == BranchType.LINE]
-    if col_name not in df.columns:
-        result = line_data.size == df.size
-    elif np.isnan(val):
-        result = pd.isna(line_data[col_name])
-    else:
-        result = line_data[col_name] == val
-    return result
-
-
-def err_line_col_check(col_name: str, default: float) -> str:
-    return f"For '{BranchType.LINE}' branches '{col_name} must be set to {default} or left empty."
 
 
 def finite_check(s: pd.Series, allow_nan: bool = False):
@@ -50,3 +25,23 @@ def err_ge_check(ge: str, le: str, null: bool) -> str:
     else:
         result = f"'{ge}' must be greater or equal to '{le}' (if privided)."
     return result
+
+
+def err_greater_check(g: str, l: str, null: bool) -> str:
+    if not null:
+        result = f"'{g}' must be greater from '{l}'."
+    else:
+        result = f"'{g}' must be greater from '{l}' (if privided)."
+    return result
+
+
+def err_foreign_key(fk_col: str) -> str:
+    return f"invalid refference to {fk_col}"
+
+
+def err_prange() -> str:
+    return "some power generation ranges [p_start, p_end] are incorrect"
+
+
+def err_non_monotonic_merit_order() -> str:
+    return "some generators have decreasing merit order costs"

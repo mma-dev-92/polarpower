@@ -2,8 +2,9 @@ from typing import Optional
 
 import pandas as pd
 import pandera as pa
-import src.model.data_models.utils as utils
 from pandera.typing import Index, Series
+
+import src.model.data_models.utils as utils
 from src.model.data_models import DataFrameModelWithContext
 
 
@@ -27,18 +28,13 @@ class GeneratorsDataModel(DataFrameModelWithContext):
         coerce=True,
         description="Minimal power generation.",
     )
-    cost: Optional[Series[float]] = pa.Field(
-        coerce=True,
-        default=0.0,
-        description="Linear cost of generation [per unit].",
-    )
     active: Optional[Series[bool]] = pa.Field(
         coerce=True,
         default=True,
         description="Indicates if given generator is active or not.",
     )
 
-    @pa.check("node_id")
+    @pa.check("node_id", error=utils.err_foreign_key(fk_col="node_id"))
     def validate_node_identifiers(cls, node_id: Series[str]):
         return node_id.isin(cls.get_context("nodes_index"))
 
@@ -50,11 +46,8 @@ class GeneratorsDataModel(DataFrameModelWithContext):
     def validate_P_min_is_finite(cls, P_min: Series[float]):
         return utils.finite_check(P_min, allow_nan=False)
 
-    @pa.check("cost", error=utils.err_finite_check("cost", null=True))
-    def validate_cost_is_finite(cls, cost: Series[float]):
-        return utils.finite_check(cost, allow_nan=True)
-
     @pa.dataframe_check(error=utils.err_ge_check("P_max", "P_min", null=False))
     def validate_power_bounds(cls, df: pd.DataFrame) -> pd.Series:
         """Validate if P_max is greater or equal than P_min."""
         return df["P_max"] >= df["P_min"]
+
